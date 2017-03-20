@@ -25,9 +25,7 @@ export class ItemCart extends Component {
                 , Number(amount));
             ok(amount + '  ' + item.itemName + ' in the cart');
         } else throwError('item amount', ' you add all available ()'+ item.itemName +' to cart')
-
     }
-
     render() {
         const item = this.props.item;
         const wished = item.wish.indexOf(this.props.user) > -1;

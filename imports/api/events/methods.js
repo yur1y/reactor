@@ -87,15 +87,14 @@ Meteor.methods({
                                 user: userId[i],
                                 answer: answer //admin add group to event ,user not confirmed it yet
                             }
-                        }, $set: {status: 'ordering'}
+                        }
                     })
                 } else {
                     Events.update({
                             $and: [{$or: [{_id: id}, {groups: id}]}, {'confirm.user': userId[i]}]
                         }, {
                             $set: {
-                                'confirm.$.answer': answer,
-                                status: 'ordering'
+                                'confirm.$.answer': answer
                             }
                         }
                     )

@@ -19,7 +19,6 @@ export class ItemsData extends Component {
         super(props);
     }
 
-
     componentDidMount() {
         $(document).ready(function () {
             $("#myTab a").click(function (e) {
@@ -28,7 +27,6 @@ export class ItemsData extends Component {
             });
         });
     }
-
     handleSubmit(event) {
         event.preventDefault();
         const name = ReactDOM.findDOMNode(this.refs.nameInput).value.trim();
@@ -38,7 +36,6 @@ export class ItemsData extends Component {
         itemInsert(thisUrl(), name, cash, amount);
 
     }
-
     renderItems() {
         return this.props.items.map((item) => {
             return (<div key={item._id}>
@@ -61,8 +58,6 @@ export class ItemsData extends Component {
     render() {
         return (
             <div className="container">
-
-
                 <ul className="nav nav-tabs" id="myTab">
                     <li><a className="active glyphicon glyphicon-globe" href="#sectionA">Items</a></li>
                     <li><a className=" glyphicon glyphicon-plus" href="#sectionB">Add Item</a></li>
@@ -95,7 +90,6 @@ export class ItemsData extends Component {
         )
     }
 }
-
 ItemsData.propTypes = {
     items: PropTypes.array,
     user: PropTypes.string

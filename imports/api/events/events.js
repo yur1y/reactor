@@ -11,7 +11,7 @@ Events.allow({
         return userId;
     },
     update (userId, doc) {
-        return ownsDocument(userId, doc);
+        return userId;
     },
     remove (userId, doc) {
         return ownsDocument(userId, doc);

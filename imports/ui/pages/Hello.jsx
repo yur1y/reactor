@@ -42,10 +42,6 @@ export default class Hello extends Component {
 
 
     }
-    componentWillUnmount() {
-
-    }
-
     render() {
         return <div>
             <div className="container">
@@ -60,21 +56,15 @@ export default class Hello extends Component {
                             <li data-target="#carousel-example-generic" data-slide-to="2"/>
                             <li data-target="#carousel-example-generic" data-slide-to="3"/>
                         </ol>
-
                         <div className="carousel-inner">
                             <div className="item active">
                                 <img src="https://www.codepolitan.com/wp-content/uploads/2014/12/meteorjs_cover.jpg"/>
-
-
                                 <div className="header-text hidden-xs">
                                     <div className="col-md-12 text-center">
-
-
                                     </div>
                                 </div>
                             </div>
                             <div className="item">
-
                                 <img
                                     src="https://webassets.mongodb.com/_com_assets/cms/mongodb-for-giant-ideas-bbab5c3cf8.png"
                                 />

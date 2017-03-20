@@ -129,8 +129,6 @@ Meteor.methods({
         let user = this.userId;
         if (user) {
 
-            data.event = Events.findOne({_id: data.event});
-
             data.item = [];
 
             data.orderedCount = 0;

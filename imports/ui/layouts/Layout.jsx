@@ -9,7 +9,6 @@ export class Layout extends Component {
     constructor(props) {
         super(props);
     }
-
     render() {
         return (   <div>
                 <nav className="navbar navbar-default navbar-fixed-top">
@@ -26,11 +25,10 @@ export class Layout extends Component {
                             <Link className="navbar-brand  glyphicon glyphicon-home" to='/'>
                                 Home</Link>
                         </div>
-
                         <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                             {this.props.user ?
                                 <ul className="nav navbar-nav">
-                                    <li ><Link to="/events" className='glyphicon glyphicon-calendar'>Event <span
+                                    <li ><Link to="/events" className='glyphicon glyphicon-calendar'>Events<span
                                         className="sr-only"/></Link></li>
                                     <li><Link to="/groups" className='glyphicon glyphicon-globe'>Groups</Link></li>
                                     <li><Link to="/account" className='glyphicon glyphicon-user'>Account</Link></li>

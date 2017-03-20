@@ -6,11 +6,6 @@ import {throwError, totalCost, userAmount, ok, ownsDocument} from '../../startup
 
 
 Meteor.methods({
-    'items.insert' (url, name, cash, amount)  {
-
-        // else return new Error();
-    },
-
     'items.remove' (filter)  {
         if (this.userId) {
             Items.remove({

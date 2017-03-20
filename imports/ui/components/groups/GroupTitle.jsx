@@ -4,13 +4,13 @@ import {Link} from 'react-router';
 export default class GroupTitle extends Component {
 
     render() {
-
+        const group= this.props.group;
         return (
-            <div className="panel panel-default">
+            <div className="well-sm ">
                 <div className="panel-body">
-                    <Link key={this.props.group.url} to={`/groups/${this.props.group.url}`}>
-                        <img src={this.props.group.logo} width="200"/>
-                        <h4>{this.props.group.name}      </h4>
+                    <Link key={group.url} to={`/groups/${group.url}`}>
+                        <img src={group.logo} width="200"/>
+                        <h4>{group.name}      </h4>
                     </Link>
                 </div>
             </div>

@@ -8,29 +8,38 @@ import {thisUrl} from '../../../startup/both/helpers';
 import Profile from '../users/Profile';
 import ItemsData from '../items/ItemsData';
 export class GroupDetails extends Component {
-
+    constructor(props) {
+        super(props);
+        this.state = {
+            group: null
+        }
+    }
 
     groupOwner() {
 
-        const owner = this.props.users.filter(doc => doc._id === this.props.group.owner);
+        const owner = this.props.users.filter(doc => doc._id === this.state.group.owner);
         return owner.map(user => {
-            return <div>Owner: <Profile key={user._id} user={user}/></div>
+            return ( <div key={user._id}><p>Owner:</p> <Profile user={user}/></div>)
         });
     }
 
     usersIn() {
-        const users = this.props.users.filter(doc => doc.groups === this.props.group._id && doc._id != this.props.group.owner);
+
+        const group = this.state.group;
+        const users = this.props.users.filter(user => user._id != group.owner && user.groups.indexOf(group._id) != -1);
+
         return users.map(user => {
-            return <Profile key={user._id} user={user}/>
+            this.state.user = user;
+            return <div key={user._id}><Profile user={user}/>
+
+            </div>
         });
+
     }
 
-
-
-
     render() {
-
         return ( <div> { this.props.group.map(group => {
+            this.state.group = group;
             return <div key={group._id} className="container">
 
                 <div className="row">
@@ -43,7 +52,6 @@ export class GroupDetails extends Component {
                         </div> : ''}
                     <div className="media">
 
-
                         <div className="media-left media-middle">
                             <img src={group.logo} width="200"/>
 
@@ -55,7 +63,7 @@ export class GroupDetails extends Component {
                             <div>{this.groupOwner()}</div>
 
                         </div>
-                        <div>{this.usersIn()}</div>
+                        <div>Users in group: {this.usersIn().length > 0 ? this.usersIn() : ' no users'}</div>
                     </div>
                 </div>
                 <div><ItemsData /></div>
@@ -63,9 +71,7 @@ export class GroupDetails extends Component {
         })}
         </div> )
     }
-
 }
-
 GroupDetails.propTypes = {
     group: PropTypes.array,
     user: PropTypes.string,
@@ -73,7 +79,6 @@ GroupDetails.propTypes = {
 };
 
 export  default   createContainer(() => {
-
     Meteor.subscribe('group', thisUrl());
     Meteor.subscribe('users');
     return {

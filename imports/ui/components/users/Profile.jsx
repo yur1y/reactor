@@ -1,12 +1,11 @@
 import React, {Component, PropTypes} from 'react';
 import {Link} from 'react-router';
 
-export default class GroupTitle extends Component {
+export default class Profile extends Component {
 
     render() {
 
         const user = this.props.user.services;
-
         return (
             <div className="container-fluid">
                 <h4><img className="img-circle" src={    user && user.google ? user.google.picture :
@@ -18,6 +17,6 @@ export default class GroupTitle extends Component {
     }
 }
 
-GroupTitle.propTypes = {
+Profile.propTypes = {
     user: PropTypes.object,
 };

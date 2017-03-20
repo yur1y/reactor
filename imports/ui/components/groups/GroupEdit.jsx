@@ -3,8 +3,10 @@ import React, {Component, PropTypes} from 'react';
 import {Link, browserHistory} from 'react-router';
 import ReactDOM from 'react-dom';
 import {createContainer} from 'meteor/react-meteor-data';
-import {Groups} from '../../../../imports/api/groups/groups.js'
+import {getSlug} from 'meteor/ongoworks:speakingurl';
 
+import {Groups} from '../../../../imports/api/groups/groups.js'
+import {itemInsert} from '../../../../imports/api/items/methods';
 import {thisUrl, ok, noLogo} from '../../../startup/both/helpers';
 
 import Profile from '../users/Profile';
@@ -19,7 +21,6 @@ export class GroupEdit extends Component {
     }
 
     addUser() {
-        console.log(this.state.user._id, this.state.group._id);
         Meteor.call('users.Addgroup', this.state.user._id, this.state.group._id);
     }
 
@@ -29,7 +30,7 @@ export class GroupEdit extends Component {
 
     usersIn() {
         const group = this.state.group;
-        const users = this.props.users.filter(user => user._id != group.owner && user.groups.indexOf( group._id)!=-1);
+        const users = this.props.users.filter(user => user._id != group.owner && user.groups.indexOf(group._id) != -1);
 
         return users.map(user => {
             this.state.user = user;
@@ -41,17 +42,9 @@ export class GroupEdit extends Component {
         });
     }
 
-// allUsers: Meteor.users.find({
-//     $and: [{_id: {$not: this.owner}},
-//         {groups: {$not: this._id}}
-//     ]
-// }).fetch(),
-//     usersIn: Meteor.users.find({ $and: [{_id: {$not: this.owner}},
-//     {groups:  this._id}
-// ]}).fetch()
     allUsers() {
         const group = this.state.group;
-        const users = this.props.users.filter(user => user._id != group.owner && user.groups.indexOf(group._id)==-1);
+        const users = this.props.users.filter(user => user._id != group.owner && user.groups.indexOf(group._id) == -1);
         return users.map(user => {
             this.state.user = user;
             return <div key={user._id}><Profile user={user}/>
@@ -83,10 +76,8 @@ export class GroupEdit extends Component {
 
     }
 
-    newLogo(event) {
-        event.preventDefault();
-        Meteor.call('items.insert', this.state.group.url, this.state.group._id, this.state.group.logo);
-
+    newLogo() {
+        itemInsert(this.state.group.url, this.state.group._id, this.state.group.logo);
     }
 
     removeLogo() {
@@ -96,7 +87,6 @@ export class GroupEdit extends Component {
             ok('no logo');
         }
     }
-
 
     render() {
 
@@ -113,8 +103,6 @@ export class GroupEdit extends Component {
                             </Link>
                         </div> : ''}
                     <div className="media">
-
-
                         <div className="media-left media-middle "
                              data-toggle="tooltip"
                              title=" click to delete current logo"><i onClick={this.removeLogo.bind(this)}
