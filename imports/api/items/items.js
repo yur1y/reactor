@@ -27,7 +27,7 @@ Items.allow({
                 if (file.size < 1 || file.size > 1024 * 1000) {
                     throwError('file-size', 'file size is bigger then 1MB');
                 }
-                if (['png', 'jpg', 'jpeg', 'gif', 'bmp'].indexOf(file.extension) == -1) {
+                if (['png', 'jpg', 'jpeg', 'gif', 'bmp'].indexOf(file.extension) === -1) {
                     throwError('file', 'file is not an image');
                 }
                 return true;

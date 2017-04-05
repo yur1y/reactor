@@ -5,7 +5,7 @@ import {Blaze} from 'meteor/blaze';
 
 export default class SAlertWrapper extends Component {
     componentDidMount() {
-        // Use Meteor Blaze to render login buttons
+        // Use Meteor Blaze to render sAlert
         this.view = Blaze.render(Template.sAlert,
             ReactDOM.findDOMNode(this.refs.container));
     }

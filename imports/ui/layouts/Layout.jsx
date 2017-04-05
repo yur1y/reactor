@@ -1,58 +1,123 @@
 import React, {Component, PropTypes} from 'react';
 import {createContainer} from 'meteor/react-meteor-data';
-import {IndexLink, Link} from 'react-router';
+import { Link ,browserHistory} from 'react-router';
 import  {LoginButtons}  from 'meteor/okgrow:accounts-ui-react';
 import SAlertWrapper from '../../utils/SAlertWrapper';
-import '../stylesheets/navigation.less';
+import Profile from '../components/users/Profile';
 
+import '../stylesheets/main.less';
+
+import {Tabs, Tab} from 'material-ui/Tabs';
+
+import FontIcon from 'material-ui/FontIcon';
 export class Layout extends Component {
     constructor(props) {
         super(props);
+        this.state={
+            login:true
+        };
+        this.clickLink=this.clickLink.bind(this)
+    }
+    componentDidMount(){
+        $('.loginClosed').click( ()=> {
+            if(this.state.login===true){
+                setTimeout(()=>{
+                    $('#login-name-link').trigger('click');
+                this.state.login =false;
+                },1)
+            }
+        });
+    }
+    closeLogin(){
+        $('.login-close-text').click();
+            this.state.login=true
+    }
+    clickLink(link){
+        this.closeLogin();
+        browserHistory.push(link);
     }
     render() {
-        return (   <div>
-                <nav className="navbar navbar-default navbar-fixed-top">
-                    <div className="container-fluid">
-                        <div className="navbar-header">
-                            <button type="button" className="navbar-toggle collapsed" data-toggle="collapse"
-                                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                                <span className="sr-only">Toggle navigation</span>
-                                <span className="icon-bar"/>
-                                <span className="icon-bar"/>
-                                <span className="icon-bar"/>
-                                <span className="icon-bar"/>
-                            </button>
-                            <Link className="navbar-brand  glyphicon glyphicon-home" to='/'>
-                                Home</Link>
-                        </div>
-                        <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                            {this.props.user ?
-                                <ul className="nav navbar-nav">
-                                    <li ><Link to="/events" className='glyphicon glyphicon-calendar'>Events<span
-                                        className="sr-only"/></Link></li>
-                                    <li><Link to="/groups" className='glyphicon glyphicon-globe'>Groups</Link></li>
-                                    <li><Link to="/account" className='glyphicon glyphicon-user'>Account</Link></li>
-                                </ul>
-                                : ''}
-                            <ul className="nav navbar-left">
-                                <li>
-                                    <LoginButtons  />
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </nav>
-                <div > <SAlertWrapper/></div>
-                {this.props.children }
-            </div>
-        )
+        const styles = {
+            appBar: {
+                flexWrap: 'wrap'
+            },
+            tabs: {width: '100%'},
+            iconRight:{marginRight:'25%',
+                display: 'block',
+            width:'60%'},
+            iconStyles :{
+                color:'white',
+            },
+            login:{fontSize:'14px',fontColor:'white',    textTransform: 'uppercase'}
+        };
+        return ( <div> {this.props.user ?  <div><Tabs style={styles.tabs} >
+                            <Tab   onClick={this.clickLink.bind(this,'/')}
+                                icon={<FontIcon  className="material-icons"
+                                                 style={styles.iconStyles}>home</FontIcon>}
+                                label="Home"    />
+            <Tab  onClick={  this.clickLink.bind(this,'/events')}
+                                icon={<FontIcon  className="material-icons"
+                                                 style={styles.iconStyles}>event</FontIcon>}
+                              label="Events"    />
+                            <Tab  onClick={this.clickLink.bind(this,'/groups')}
+                                icon={<FontIcon  className="material-icons"
+                                                 style={styles.iconStyles}>store</FontIcon>}
+                                label="Groups"    />
+                            <Tab  onClick={ this.clickLink.bind(this,'/account')}
+                                icon={<FontIcon  className="material-icons"
+                                                 style={styles.iconStyles}>account_circle</FontIcon>}
+                                label="Account"     />
+                            <Tab onClick={ this.clickLink.bind(this,'/about')}
+                                icon={<FontIcon  className="material-icons"
+                                                 style={styles.iconStyles}>keyboard</FontIcon>}
+                                label="About"    />
+                            <Tab className="loginClosed"
+                                icon={!this.props.user?<FontIcon  className="material-icons"
+                                                       style={styles.iconStyles}>face</FontIcon>:<Profile  name={false} user={this.props.user}/>}
+                                label ={  <div style={styles.login}><LoginButtons  /></div> }
+                                onClick={()=>{
+                                    if($('#login-dropdown-list').is(':visible')){
+                                        this.closeLogin();
+                                    }else{$('#login-sign-in-link').trigger('click'); }
+                                    } }
+                            />
+                        </Tabs>
+        </div>:
+            <div><Tabs style={styles.tabs} >
+                <Tab onClick={this.closeLogin}
+                     icon={<FontIcon  className="material-icons"
+                                      style={styles.iconStyles}>home</FontIcon>}
+                     label="Home"   containerElement={ <Link  to="/"/> } />
+
+                <Tab onClick={this.closeLogin}
+                     icon={<FontIcon  className="material-icons"
+                                      style={styles.iconStyles}>keyboard</FontIcon>}
+                     label="About"   containerElement={ <Link  to="/about"/> } />
+                <Tab
+                    icon={<FontIcon  className="material-icons"
+                                     style={styles.iconStyles}>face</FontIcon>}
+                    label ={  <div style={styles.login}><LoginButtons  /></div> }
+                    onClick={()=>{
+                        if($('#login-dropdown-list').is(':visible')){
+                            this.closeLogin();
+                        }else{$('#login-sign-in-link').trigger('click'); }
+                    } }
+                />
+            </Tabs>
+               </div>}
+            <SAlertWrapper/>
+            {this.props.children}
+                </div>)
     }
 }
 Layout.propTypes = {
-    user: PropTypes.string
+    user: PropTypes.object
 };
 export default createContainer(() => {
+    if(Meteor.userId()){
+        Meteor.subscribe('users');
+    }
     return {
-        user: Meteor.userId()
+        user: Meteor.user()
     }
 }, Layout)

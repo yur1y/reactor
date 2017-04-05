@@ -7,7 +7,7 @@ import {Groups} from '../../api/groups/groups';
 
 export let ownsDocument = (userId, doc) => {
     if (doc && doc.owner) {
-        return doc.owner == userId
+        return doc.owner === userId
     }
 };
 
@@ -102,5 +102,3 @@ export let eventItems = (eventId, user) => {
 
     return itemIds;
 };
-
-// export let parent = (temp) => temp.view.parentView._templateInstance;

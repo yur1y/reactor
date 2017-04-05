@@ -159,7 +159,7 @@ Meteor.methods({
 
             Meteor.call('users.send', ownerEmail, "toOwner.html", data);
 
-            if (data.email == true) {
+            if (data.email === true) {
 
                 let userEmail = Meteor.call('users.email', user);
                 Meteor.call('users.send', userEmail, 'cheque.html', data);

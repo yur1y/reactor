@@ -1,12 +1,23 @@
 import React, {Component, PropTypes} from 'react';
-import ReactDOM from 'react-dom';
 import {Meteor} from 'meteor/meteor';
 
 import {ok} from  '../../../../imports/startup/both/helpers.js';
+import IconButton from 'material-ui/IconButton';
+import Dialog from 'material-ui/Dialog';
+import EditorModeEdit from 'material-ui/svg-icons/editor/mode-edit';
+import FlatButton from 'material-ui/FlatButton';
+import TextField from 'material-ui/TextField';
+import Divider from 'material-ui/Divider';
+import Paper from 'material-ui/Paper';
 
 export class ItemEdit extends Component {
     constructor(props) {
         super(props);
+        this.state={
+            open:false
+        };
+        this.handleOpen=this.handleOpen.bind(this);
+        this.handleClose=this.handleClose.bind(this);
     }
     removeItem() {
         Meteor.call('items.remove', this.props.item._id, function (err, res) {
@@ -14,63 +25,77 @@ export class ItemEdit extends Component {
                 ok('item   deleted')
             }
         });
-        $(`.${this.props.item._id}`).modal('hide');
     }
-    updateItem(event) {
-        event.preventDefault();
-        const name = ReactDOM.findDOMNode(this.refs.nameInput).value.trim();
-        const cash = ReactDOM.findDOMNode(this.refs.cashInput).value.trim();
-        const amount = ReactDOM.findDOMNode(this.refs.amountInput).value.trim();
-        const coupons = ReactDOM.findDOMNode(this.refs.couponsInput).value.trim();
+    updateItem(e) {
+        e.preventDefault();
 
-        Meteor.call('items.update', this.props.item._id, name,
-            Number(cash), Number(amount), Number(coupons));
-        $(`.${this.props.item._id}`).modal('hide');
+        Meteor.call('items.update', this.props.item._id, e.target.nameInput .value,
+            Number(e.target.cashInput .value ), Number( e.target.amountInput .value),
+            Number( e.target.couponsInput .value));
     }
+    handleOpen  ()   {
+        this.setState({open: true});
+    };
+
+    handleClose  ()  {
+        this.setState({open: false});
+    };
+
     render() {
         const item = this.props.item;
+
+        const actions = [
+            <FlatButton
+                label="Cancel"
+                onTouchTap={this.handleClose}
+            />,
+            <FlatButton
+                onClick={this.removeItem.bind(this)}
+                label="Delete item"
+                secondary={true}
+                onTouchTap={this.handleClose}
+            />
+        ];
+        const style={'color':'white','float':'right','width':'24px','height':'24px'};
+
         return (
-            <div>
-                <button type="button" className="btn btn-default glyphicon glyphicon-edit" data-toggle="modal"
-                        data-target={`.${item._id}`}   >edit</button>
-
-                <div className={`modal fade ${item._id}`} tabIndex="-1" role="dialog"
-                     aria-labelledby="mySmallModalLabel">
-                    <div className="modal-dialog  modal-sm" role="document">
-                        <div className="modal-content">
-                            <div className="modal-header">{item.itemName}
-                                <button type="button" className="close" data-dismiss="modal" aria-label="Close"><span
-                                    aria-hidden="true">&times;</span></button>
-                                <h4 className="modal-title" id="gridSystemModalLabel" value={item.itemName}/>
+            <span>
+                <IconButton style={style}
+                            tooltipPosition="top-center"
+                            tooltip={`edit ${item.itemName}`} onClick={this.handleOpen}><EditorModeEdit color={'white'}/></IconButton>
+                <Dialog
+                    title={`Editing ${item.itemName}`}
+                    actions={actions}
+                    modal={false}
+                    open={this.state.open}
+                    onRequestClose={this.handleClose}>
+                    < Paper zDepth={2}>
+                        <form onSubmit={this.updateItem.bind(this)}>
+                            <div>
+                                <TextField type="text" minLength="3"
+                                           defaultValue={item.itemName} required="required" underlineShow={false}
+                                           name="nameInput"/>
+                                <Divider />
+                                <TextField type="number" defaultValue={item.cash} underlineShow={false}
+                                           required="required" name="cashInput"/>
+                                <Divider />
+                                <TextField type="number" defaultValue={item.amount} underlineShow={false}
+                                           required="required" name="amountInput"/>
+                                <Divider />
+                                <TextField type="number" defaultValue={item.coupons} min="0" underlineShow={false}
+                                           required="required" name="couponsInput"/>
                             </div>
-                            <div className="modal-body">
-                                <form onSubmit={this.updateItem.bind(this)}>
-                                    <div>
-                                        <input className="form-control" type="text" minLength="3"
-                                               placeholder={item.itemName} required="required" ref="nameInput"/>
-                                        <input className="form-control" type="number" placeholder={item.cash}
-                                               required="required" ref="cashInput"/>
-                                        <input className=" form-control " type="number" placeholder={item.amount}
-                                               required="required" ref="amountInput"/>
-                                        <input className="form-control" type="number" placeholder={item.coupons} min="0"
-                                               required="required" ref="couponsInput"/>
-                                    </div>
-                                    <div className="modal-footer">
-                                        <button className="btn btn-default update glyphicon glyphicon-ok"
-                                                type="submit"  >submit</button>
-
-                                        <button className="btn btn-danger remove glyphicon glyphicon-remove"
-                                                type="button" data-toggle="tooltip" title="are you sure?"
-                                                onClick={this.removeItem.bind(this)} >delete</button>
-                                        <button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        )
+                            <FlatButton fullWidth={true}
+                                        label="Update"
+                                        primary={true}
+                                        keyboardFocused={true}
+                                        onTouchTap={this.handleClose}
+                                        type="submit"/>
+                        </form>
+                    </Paper>
+                </Dialog>
+            </span>
+        );
     }
 }
 ItemEdit.PropTypes = {

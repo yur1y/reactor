@@ -39,7 +39,7 @@ Meteor.methods({
             if (Items.find({
                     _id: itemId,
                     'cart.user': user,
-                }).count() == 0) {
+                }).count() === 0) {
                 Items.update({_id: itemId}, {  //item added first time by user
                     $push: {
                         cart: {
@@ -53,7 +53,7 @@ Meteor.methods({
                         _id: itemId,
                         'cart.user': user,
                         'cart.amount': amount
-                    }).count() == 0) {
+                    }).count() === 0) {
                     Items.update({                    //item is already in cart, but user change amount
                             _id: itemId,
                             'cart.user': user,
@@ -81,7 +81,7 @@ Meteor.methods({
 
     'items.payBy' (itemId, payBy)  {
         if (this.userId) {
-            typeof(itemId) == 'string' ? itemId = [itemId] : null;
+            typeof(itemId) === 'string' ? itemId = [itemId] : null;
             for (let i = 0; i < itemId.length; i++) {
 
                 Items.update({_id: itemId[i], 'cart.user': this.userId}, {
@@ -94,7 +94,7 @@ Meteor.methods({
     },
     'items.notPay' (itemId) {
         if (this.userId) {
-            typeof(itemId) == 'string' ? itemId = [itemId] : null;
+            typeof(itemId) === 'string' ? itemId = [itemId] : null;
             for (let i = 0; i < itemId.length; i++) {
 
                 Items.update({_id: itemId[i], 'cart.user': this.userId}, {
@@ -107,7 +107,7 @@ Meteor.methods({
     },
     'items.order' (itemId, ownerId, delivery)  {      //event owner id
         if (this.userId) {
-            typeof(itemId) == 'string' ? itemId = [itemId] : null;
+            typeof(itemId) === 'string' ? itemId = [itemId] : null;
             for (let i = 0; i < itemId.length; i++) {
 
                 Items.update({_id: itemId[i], 'cart.user': this.userId}, {

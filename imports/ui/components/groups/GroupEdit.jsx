@@ -1,22 +1,30 @@
 import {Meteor} from 'meteor/meteor';
 import React, {Component, PropTypes} from 'react';
 import {Link, browserHistory} from 'react-router';
-import ReactDOM from 'react-dom';
 import {createContainer} from 'meteor/react-meteor-data';
 import {getSlug} from 'meteor/ongoworks:speakingurl';
 
 import {Groups} from '../../../../imports/api/groups/groups.js'
-import {itemInsert} from '../../../../imports/api/items/methods';
-import {thisUrl, ok, noLogo} from '../../../startup/both/helpers';
 
+import {thisUrl} from '../../../startup/both/helpers';
+
+import RaisedButton from 'material-ui/RaisedButton';
+import {List, ListItem} from 'material-ui/List';
+import Paper from 'material-ui/Paper';
 import Profile from '../users/Profile';
+import {GroupUpdateForm} from "./GroupUpdateForm";
 
 export class GroupEdit extends Component {
     constructor(props) {
         super(props);
         this.state = {
             group: null,
-            user: null
+            user: null,
+              style : {
+                height: 100, width: 100,
+                margin: 20, textAlign: 'center',
+                display: 'inline-block',
+            }
         }
     }
 
@@ -30,113 +38,46 @@ export class GroupEdit extends Component {
 
     usersIn() {
         const group = this.state.group;
-        const users = this.props.users.filter(user => user._id != group.owner && user.groups.indexOf(group._id) != -1);
+        const users = this.props.users.filter(user => user._id !== group.owner && user.groups.indexOf(group._id) !== -1);
 
         return users.map(user => {
             this.state.user = user;
-            return <div key={user._id}><Profile user={user}/>
-                <button onClick={this.removeUser.bind(this)}
-                        className="btn btn-default">Remove User
-                </button>
+            return <div style={this.state.style} key={user._id}><Profile user={user} name={true}/>
+
+                <RaisedButton onClick={this.removeUser.bind(this)} label="Remove User" />
+
             </div>
         });
     }
 
     allUsers() {
         const group = this.state.group;
-        const users = this.props.users.filter(user => user._id != group.owner && user.groups.indexOf(group._id) == -1);
+        const users = this.props.users.filter(user => user._id !== group.owner && user.groups.indexOf(group._id) === -1);
+
         return users.map(user => {
             this.state.user = user;
-            return <div key={user._id}><Profile user={user}/>
-                <button onClick={this.addUser.bind(this)}
-                        className="btn btn-default">Add User
-                </button>
+            return <div style={this.state.style} key={user._id}><Profile user={user} name={true}/>
+                <RaisedButton onClick={this.addUser.bind(this)} label="Add User" />
+
             </div>
         });
     }
-
-    updateGroup(event) {
-        event.preventDefault();
-        const name = ReactDOM.findDOMNode(this.refs.nameInput).value.trim();
-
-        if (name.length >= 3) {
-            Meteor.call('groups.update', this.state.group._id, name, this.refs.openInput.checked, this.state.group.name);
-            browserHistory.push(`/groups/${getSlug(name)}/edit`);
-        }
-    }
-
-    removeGroup() {
-        Meteor.call('groups.remove', this.state.group._id, this.state.group.url, function (err, res) {
-            if (res) {
-
-                ok('group deleted');
-                browserHistory.push('/groups');
-            }
-        });
-
-    }
-
-    newLogo() {
-        itemInsert(this.state.group.url, this.state.group._id, this.state.group.logo);
-    }
-
-    removeLogo() {
-        if (this.props.group.logo != noLogo()) {
-            Meteor.call('items.remove', this.state.group.logo);
-            Meteor.call('groups.noLogo', this.state.group._id);
-            ok('no logo');
-        }
-    }
-
     render() {
 
         return ( <div> { this.props.group.map(group => {
             this.state.group = group;
             return <div key={group._id} className="container">
 
-                <div className="row">
+                <Paper>
                     {this.props.currentUser === group.owner ?
-                        <div className="btn-group" role="group">
-
-                            <Link className="btn btn-default" to={`/groups/${group.url}`}>
-                                Back
-                            </Link>
-                        </div> : ''}
+                        <Link   to={`/groups/${group.url}`}><RaisedButton fullWidth={true} label="Back" /></Link> : ''}
                     <div className="media">
-                        <div className="media-left media-middle "
-                             data-toggle="tooltip"
-                             title=" click to delete current logo"><i onClick={this.removeLogo.bind(this)}
-                                                                      className="glyphicon glyphicon-remove-circle"/>
-                            <img onMouseDown={this.newLogo.bind(this)} src={group.logo} width="200" id="replace-logo"
-                                 data-toggle="tooltip" title="click to choose new logo"/>
-                        </div>
-                        <div className="media-body">
-
-                            <form onSubmit={this.updateGroup.bind(this)}>
-                                <input className=" " type="text" id="input-name" defaultValue={group.name}
-                                       ref='nameInput' minLength="1"/>{group.name}
-
-                                <p><input type="checkbox" className="checkbox" ref="openInput"
-                                          data-toggle="tooltip" checked={group.open}
-                                          onChange={this.updateGroup.bind(this)}
-                                          title={group.open ? ' public' : ' closed'}
-
-                                />{group.open ? ' public' : ' closed'}</p>
-                                <button className="btn btn-default glyphicon glyphicon-ok"
-                                        type="submit">Update
-                                </button>
-                            </form>
-                            <button onClick={this.removeGroup.bind(this)}
-                                    className="btn btn-default glyphicon glyphicon-remove"
-                                    data-toggle="tooltip" title="are you sure?">delete
-                            </button>
-                        </div>
+                        <GroupUpdateForm group={group}/>
                         <div>{this.usersIn()}
                             {this.allUsers()}
                         </div>
                     </div>
-                </div>
-                <div></div>
+                </Paper>
             </div>
         })}
         </div> )

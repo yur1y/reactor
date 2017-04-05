@@ -1,5 +1,7 @@
 import React, {Component, PropTypes} from 'react';
 import {browserHistory} from 'react-router';
+import RaisedButton from 'material-ui/RaisedButton';
+import Divider from 'material-ui/Divider';
 
 export default class EventHead extends Component {
 
@@ -23,13 +25,14 @@ export default class EventHead extends Component {
     render() {
 
         return (
-            <div className="btn-group confirmation">
-                <button onClick={this.handleConfirm.bind(this)}
-                        className="btn btn-default glyphicon glyphicon-thumbs-up">Confirm
-                </button>
-                <button onClick={this.handleUnConfirm.bind(this)}
-                        className="btn btn-default glyphicon glyphicon-thumbs-down">Leave event
-                </button>
+            <div className=" confirmation">
+                <Divider/>
+                <RaisedButton onClick={this.handleConfirm.bind(this)} label="Confirm" fullWidth={true}
+                              icon={<i  className="material-icons">thumb_up</i>}/>
+                <Divider/>
+                <RaisedButton onClick={this.handleUnConfirm.bind(this)}
+                        fullWidth={true} label="Leave event"
+                              icon={<i  className="material-icons">thumb_down</i>}/>
             </div>
         )
     }

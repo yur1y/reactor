@@ -1,103 +1,65 @@
 import React, {Component, PropTypes} from 'react';
-import ReactDOM from 'react-dom';
 import {createContainer} from 'meteor/react-meteor-data';
-import {IndexLink, Link} from 'react-router';
-import {Meteor} from 'meteor/meteor';
-
-import {Items, ItemStore} from '../../../../imports/api/items/items.js';
-
-import {UploadFS} from 'meteor/jalik:ufs';
-import {ok, thisUrl} from  '../../../../imports/startup/both/helpers.js';
-
 import {ItemEdit} from './ItemEdit';
-import {itemInsert} from '../../../api/items/methods';
 import {ItemCart} from './ItemCart';
-import '../../stylesheets/navigation.less'
+
+import {GridList, GridTile} from 'material-ui/GridList';
+import Subheader from 'material-ui/Subheader';
+import {List,ListItem} from 'material-ui/List';
+
+import Divider from 'material-ui/Divider';
+
+import '../../stylesheets/main.less'
+
 
 export class ItemsData extends Component {
     constructor(props) {
         super(props);
     }
-
-    componentDidMount() {
-        $(document).ready(function () {
-            $("#myTab a").click(function (e) {
-                e.preventDefault();
-                $(this).tab('show');
-            });
-        });
-    }
-    handleSubmit(event) {
-        event.preventDefault();
-        const name = ReactDOM.findDOMNode(this.refs.nameInput).value.trim();
-        const cash = ReactDOM.findDOMNode(this.refs.cashInput).value.trim();
-        const amount = ReactDOM.findDOMNode(this.refs.amountInput).value.trim();
-
-        itemInsert(thisUrl(), name, cash, amount);
-
-    }
     renderItems() {
-        return this.props.items.map((item) => {
-            return (<div key={item._id}>
+        const styles = {
+            root: {
+                display: 'flex',
+                flexWrap: 'wrap',
+                justifyContent: 'space-around',
+            },
+            gridList: {
+                width: 550,
+                height: 500,
+                overflowY: 'auto',
+            },
+        };
+       return (
+           <div style={styles.root}>
+               <GridList  cellHeight={200} style={styles.gridList}>
+                   <Subheader>Available items</Subheader>
 
-                <div className="stitched">
-                    <img height="100" width="100" src={item.url}/>
-                    <p>name: {item.itemName}</p>
-                    <p>price: {item.cash}$ </p>
-                    <ItemCart key={item._id+'cart'} user={this.props.user} item={item}/>
+               {this.props.items.map((item)=>(
+                   <GridTile key={item._id}
+                   title={item.itemName}
+                  subtitle={<span>cost:{item.cash}</span>}
+                             actionIcon={<span style={{'marginBottom':'0px','marginLeft':'150px'}}>  <ItemCart   user={this.props.user} item={item}/>
+                                 { this.props.user === item.owner ?
+                                     (<span style={{'marginBottom':'30px','display':'block','marginRight':'20px'}}><ItemEdit   item={item} /></span>) : ''
+                                         }</span>}
+                   >  <img width={200} height={200} src={item.url} /></GridTile>
+               ))}
+               </GridList>
+       </div>);
+    }
+    render(){
+       return( <div>
 
-                    { this.props.user === item.owner ?
-                        (<ItemEdit key={item._id+'edit'} item={item} />) : ''
-                    }
-                </div>
-
-            </div>)
-        });
+            <Divider />
+            <List>
+                <Subheader key={'items_list'}>Items List</Subheader>
+                {this.renderItems()}
+            </List>
+        </div>)
     }
 
-    render() {
-        return (
-            <div className="container">
-                <ul className="nav nav-tabs" id="myTab">
-                    <li><a className="active glyphicon glyphicon-globe" href="#sectionA">Items</a></li>
-                    <li><a className=" glyphicon glyphicon-plus" href="#sectionB">Add Item</a></li>
-                </ul>
-                <br/>
-                <div className="tab-content">
-
-                    <div id="sectionA" className="tab-pane fade in active">
-                        {this.renderItems()}
-                    </div>
-                    <div id="sectionB" className="tab-pane fade in  ">
-
-                        <form className="new-group" onSubmit={this.handleSubmit.bind(this)}>
-                            <input type="text" required="required" minLength="3" className="form-control"
-                                   placeholder="item name" ref="nameInput"/>
-
-                            <input type="number" required="required" min='1' className="form-control"
-                                   placeholder="price,$" ref="cashInput"/>
-
-                            <input type="number" required="required" min="1" className="form-control"
-                                   placeholder="amount" ref="amountInput"/>
-
-                            <button className=" btn btn-default" type='submit'>
-                                add item
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        )
-    }
 }
 ItemsData.propTypes = {
-    items: PropTypes.array,
-    user: PropTypes.string
+    items: PropTypes.array.isRequired,
+    user: PropTypes.string.isRequired
 };
-export  default   createContainer(() => {
-    Meteor.subscribe('items', thisUrl());
-    return {
-        items: Items.find({cash: {$exists: true}}, {sort: {createdAt: 1}}).fetch(),
-        user: Meteor.userId()
-    };
-}, ItemsData);

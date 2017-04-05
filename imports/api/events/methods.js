@@ -54,7 +54,7 @@ Meteor.methods({
         let event = Events.findOne({_id: eventId});
 
         if (ownsDocument(this.userId, event)) {
-            if (Events.find({_id: eventId, groups: groupId}).count() == 0) {
+            if (Events.find({_id: eventId, groups: groupId}).count() === 0) {
                 Events.update({_id: eventId}, {
                     $addToSet: {groups: groupId},
                     $set: {
@@ -80,7 +80,7 @@ Meteor.methods({
 
                 if (Events.find({
                         $and: [{$or: [{_id: id}, {groups: id}]}, {'confirm.user': userId[i]}]
-                    }).count() == 0) {
+                    }).count() === 0) {
                     Events.update({$or: [{_id: id}, {groups: id}]}, {  //confirm or not group
                         $push: {
                             confirm: {
@@ -116,7 +116,7 @@ Meteor.methods({
             Events.update({_id: id}, {$push: {'ordered.user': this.userId, 'ordered.delivery': delivery}});
 
             let event = Events.findOne({_id: id});
-            if (event.ordered.length == event.confirm.length) {
+            if (event.ordered.length === event.confirm.length) {
 
                 //send 'thank-you' for take-part in event email //all user order something... so... payback them delivery !
                 Events.update({_id: id}, {$set: {status: 'delivered'}});
