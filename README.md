@@ -1,5 +1,5 @@
 # reactor
 react+meteor=reactor
 
-* [ ] fix account page
-* [ ] add some css
+* [x] fix account page
+* [x] add some css
