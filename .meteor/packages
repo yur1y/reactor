@@ -40,7 +40,6 @@ accounts-ui
 okgrow:accounts-ui-react
 meteorhacks:ssr
 standard-app-packages
-alonoslav:react-datetimepicker-new
 spacebars
 spacebars-compiler
 random

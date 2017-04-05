@@ -4,8 +4,6 @@ import {Link, browserHistory} from 'react-router';
 import {createContainer} from 'meteor/react-meteor-data';
 import {getSlug} from 'meteor/ongoworks:speakingurl';
 
-import {DateTimePicker} from 'meteor/alonoslav:react-datetimepicker-new';
-
 import {Events} from '../../../../imports/api/events/events';
 import {Groups} from '../../../../imports/api/groups/groups';
 import { thisUrl} from '../../../../imports/startup/both/helpers';

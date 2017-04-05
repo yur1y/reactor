@@ -3,7 +3,6 @@ import React, {Component, PropTypes} from 'react';
 import {Link, browserHistory} from 'react-router';
 import {createContainer} from 'meteor/react-meteor-data';
 import {getSlug} from 'meteor/ongoworks:speakingurl';
-import {DateTimePicker} from 'meteor/alonoslav:react-datetimepicker-new';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import SelectField from 'material-ui/SelectField';
